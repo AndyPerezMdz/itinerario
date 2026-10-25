@@ -26,7 +26,9 @@ export default async function MisTurnos() {
   const hoy = hoyISO();
 
   const { data: miembro } = await supabase
-    .from("miembros").select("id, nombre").eq("perfil_id", user.id).maybeSingle();
+    .from("miembros").select("id, nombre, miembro_roles(rol:roles(nombre))").eq("perfil_id", user.id)
+    .maybeSingle<{ id: string; nombre: string; miembro_roles: { rol: { nombre: string } | null }[] }>();
+  const misRoles = (miembro?.miembro_roles ?? []).map((r) => r.rol?.nombre).filter(Boolean) as string[];
 
   let turnos: Turno[] = [];
   if (miembro) {
@@ -46,7 +48,20 @@ export default async function MisTurnos() {
       <Nav nombre={perfil.nombre} rol={perfil.rol} />
       <main className="mx-auto max-w-2xl px-4 py-8">
         <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-oro">Hola, {perfil.nombre}</p>
-        <h1 className={`${ui.h1} mb-6 mt-1`}>Mis turnos</h1>
+        <h1 className={`${ui.h1} mt-1`}>Mis turnos</h1>
+        {miembro && (
+          <div className="mb-6 mt-3 flex flex-wrap items-center gap-1.5 text-sm">
+            <span className="text-stone-500">Tus roles:</span>
+            {misRoles.length ? (
+              misRoles.map((r) => (
+                <span key={r} className="rounded-full bg-oro-suave px-3 py-0.5 font-medium text-oro">{r}</span>
+              ))
+            ) : (
+              <span className="text-stone-400">ninguno todavía</span>
+            )}
+          </div>
+        )}
+        {!miembro && <div className="mb-6" />}
 
         {!miembro && (
           <p className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">

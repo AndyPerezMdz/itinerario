@@ -401,7 +401,7 @@ revoke all on function public.cambiar_rol(uuid, public.rol_app) from public, ano
 grant execute on function public.cambiar_rol(uuid, public.rol_app) to authenticated;
 
 -- ============================================================
--- 4. Cada quien puede cambiar su nombre
+-- 4. Cada quien puede cambiar su nombre y su correo
 -- ============================================================
 
 create or replace function public.cambiar_mi_nombre(p_nombre text)
@@ -440,6 +440,27 @@ drop trigger if exists miembros_sincronizar_nombre on public.miembros;
 create trigger miembros_sincronizar_nombre
   after update of nombre on public.miembros
   for each row execute function public.sincronizar_nombre_perfil();
+
+-- ---------- Cuando alguien cambia su correo (y lo confirma), se actualiza en su perfil y su ficha ----------
+create or replace function public.sincronizar_correo()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if new.email is distinct from old.email then
+    update public.perfiles set email = lower(new.email) where id = new.id;
+    begin
+      update public.miembros set email = lower(new.email) where perfil_id = new.id;
+    exception when unique_violation then
+      -- Otra ficha ya tenía ese correo: no se toca la ficha, pero el cambio de correo sí procede
+      null;
+    end;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists on_auth_user_email on auth.users;
+create trigger on_auth_user_email
+  after update of email on auth.users
+  for each row execute function public.sincronizar_correo();
 
 -- ============================================================
 -- 5. Datos del Excel (oct 2026 – sep 2027)
