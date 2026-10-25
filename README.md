@@ -30,7 +30,7 @@ Cada miembro tiene **roles** (Fotografía, Maestro(a) dominical…) en `miembro_
 
 ## Puesta en marcha
 
-1. **Supabase → SQL Editor:** pega y corre `supabase/instalar_todo.sql` (migraciones + seed), una sola vez.
+1. **Supabase → SQL Editor:** pega y corre `supabase/itinerario.sql`. Es **toda** la base en un solo archivo y se puede correr las veces que quieras: si la base está vacía la crea y carga el Excel; si ya existe, solo agrega lo que falte.
 2. **Auth → URL Configuration:** Site URL = tu dominio (o `http://localhost:3000`).
 3. **Auth → Email Templates:**
    - *Confirm signup:* `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
@@ -49,15 +49,18 @@ Cada miembro tiene **roles** (Fotografía, Maestro(a) dominical…) en `miembro_
 - `editor` y `admin` se asignan desde la tabla `perfiles` (solo un admin puede cambiar roles).
 - Si el correo del usuario ya está en `miembros.email`, su cuenta se liga sola a esa ficha y ve sus turnos en "Mis turnos".
 
-## Regenerar el seed desde el Excel
+## Base de datos
+
+Todo vive en **`supabase/itinerario.sql`**. Cuando algo de la base cambie, se edita ese archivo y se vuelve a correr completo en el SQL Editor; está hecho para no romper ni duplicar nada.
+
+Los datos del Excel (sección 5) solo se cargan en una base sin miembros ni eventos. Para regenerarlos desde otro Excel:
 
 ```bash
 pip install openpyxl
-python scripts/generar_seed.py ruta/CALENDARIO_LLDM.xlsx > supabase/seed.sql
+python scripts/generar_seed.py ruta/CALENDARIO_LLDM.xlsx
 ```
 
-Las reglas del seed arrancan el mes siguiente al último del Excel, para que "Generar mes"
-no se meta con lo importado.
+y pega lo que imprime dentro de la sección 5, reemplazando lo que hay. Las reglas arrancan el mes siguiente al último del Excel, para que "Generar mes" no se meta con lo importado.
 
 ## Panel de admin (`/admin`)
 

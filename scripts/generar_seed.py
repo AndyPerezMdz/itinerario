@@ -3,7 +3,9 @@ Convierte CALENDARIO_LLDM.xlsx en supabase/seed.sql.
 
 Uso:
     pip install openpyxl
-    python scripts/generar_seed.py ruta/CALENDARIO_LLDM.xlsx > supabase/seed.sql
+    python scripts/generar_seed.py ruta/CALENDARIO_LLDM.xlsx
+
+Lo que imprime va en la sección 5 de supabase/itinerario.sql (los datos del Excel).
 
 - Importa cada celda como evento concreto (con su fecha real), así que el
   año del Excel queda idéntico.
