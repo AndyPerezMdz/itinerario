@@ -21,10 +21,12 @@ Es idempotente: si ya existe un evento de esa actividad ese día, no lo duplica.
 
 **Permisos (RLS):**
 
-- `miembro`: solo lectura.
-- `editor`: edita todo el calendario.
-- `admin`: además cambia roles de usuarios.
+- `admin`: hace todo (calendario, miembros, reglas, rotaciones, cuentas). Los correos de
+  `correos_admin` entran como admin automáticamente.
+- `miembro`: ve el calendario completo o filtrado por persona ("Solo yo"), y sus turnos.
 - Sin sesión: no ve nada.
+
+Cada miembro tiene **roles** (Fotografía, Maestro(a) dominical…) en `miembro_roles`.
 
 ## Puesta en marcha
 
@@ -33,11 +35,7 @@ Es idempotente: si ya existe un evento de esa actividad ese día, no lo duplica.
 3. **Auth → Email Templates:**
    - *Confirm signup:* `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
    - *Reset password:* `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery`
-4. Regístrate en `/registro` y hazte admin:
-   ```sql
-   update perfiles set rol = 'admin'
-   where id = (select id from auth.users where email = 'tu@correo.com');
-   ```
+4. Regístrate en `/registro`. Si tu correo está en `correos_admin`, ya entras como admin.
 5. Local:
    ```bash
    cp .env.example .env.local   # pon URL y publishable key
@@ -61,9 +59,20 @@ python scripts/generar_seed.py ruta/CALENDARIO_LLDM.xlsx > supabase/seed.sql
 Las reglas del seed arrancan el mes siguiente al último del Excel, para que "Generar mes"
 no se meta con lo importado.
 
+## Panel de admin (`/admin`)
+
+| Sección | Qué hace |
+|---|---|
+| Resumen | Números rápidos, "Generar mes", nuevo evento especial |
+| Miembros | Alta/edición de fichas, correo (liga la cuenta), roles, activo/inactivo |
+| Actividades y roles | Catálogo con color; marcar actividades especiales |
+| Reglas | Crear, pausar y borrar reglas recurrentes |
+| Rotaciones | Turnos en orden (subir, quitar, agregar) |
+| Cuentas | Hacer admin o miembro, ligar cuenta con ficha |
+
+En el calendario, el admin le da clic a cualquier evento para editarlo o al **+** de un día para crear uno.
+
 ## Pendiente
 
-- [ ] CRUD de miembros, actividades, reglas y rotaciones en `/admin`
-- [ ] Editar, cancelar y mover eventos sueltos (excepciones)
 - [ ] Exportar a PDF para el pizarrón y `.ics` para el calendario del celular
 - [ ] Avisos (push o WhatsApp) un día antes del turno

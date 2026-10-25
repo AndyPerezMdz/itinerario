@@ -14,7 +14,7 @@ export function GenerarForm({ mesSugerido }: { mesSugerido: string }) {
           className="mt-1 block rounded-lg border border-stone-300 px-3 py-2" />
       </label>
       <button disabled={pendiente}
-        className="rounded-lg bg-marca px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60">
+        className="rounded-lg bg-marca px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-marca-oscuro disabled:opacity-60">
         {pendiente ? "Generando…" : "Generar mes"}
       </button>
       {estado && (

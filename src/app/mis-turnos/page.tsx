@@ -35,7 +35,7 @@ export default async function MisTurnos() {
     <>
       <Nav nombre={perfil.nombre} rol={perfil.rol} />
       <main className="mx-auto max-w-2xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold tracking-tight">Mis turnos</h1>
+        <h1 className="titulo mb-6 text-2xl font-semibold text-marca">Mis turnos</h1>
 
         {!miembro && (
           <p className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
@@ -50,15 +50,15 @@ export default async function MisTurnos() {
           {turnos.map((t, i) => {
             const e = t.evento!;
             return (
-              <li key={i} className="flex items-center gap-4 rounded-xl border border-stone-200 bg-white p-4">
+              <li key={i} className="flex items-center gap-4 rounded-2xl border border-stone-200/80 bg-white p-4 shadow-sm">
                 <span className="h-10 w-1 rounded-full" style={{ background: e.actividad?.color ?? "#64748b" }} />
                 <div>
-                  <div className="font-semibold">{e.titulo ?? e.actividad?.nombre}</div>
+                  <div className="font-semibold text-marca">{e.titulo ?? e.actividad?.nombre}</div>
                   <div className="text-sm capitalize text-stone-500">
                     {fechaLarga(e.fecha)}{e.hora && ` · ${e.hora.slice(0, 5)}`}
                   </div>
                 </div>
-                <span className="ml-auto rounded-full bg-stone-100 px-2.5 py-1 text-xs text-stone-600">{t.rol?.nombre}</span>
+                <span className="ml-auto rounded-full bg-oro-suave px-2.5 py-1 text-xs font-medium text-oro">{t.rol?.nombre}</span>
               </li>
             );
           })}

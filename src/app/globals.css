@@ -1,15 +1,29 @@
 @import "tailwindcss";
 
+/* Paleta sacada del logo: azul profundo + oro viejo, sobre papel cálido */
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --color-tinta: #1c1917;
-  --color-papel: #fafaf9;
-  --color-marca: #1e3a8a;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cinzel Variable", "Times New Roman", serif;
+
+  --color-marca: #0a3156;
+  --color-marca-oscuro: #061f38;
+  --color-marca-claro: #e8eef6;
+  --color-oro: #9a8758;
+  --color-oro-claro: #cdbd8f;
+  --color-oro-suave: #f4efe2;
+  --color-tinta: #17202c;
+  --color-papel: #f7f4ee;
 }
 
 body {
   background: var(--color-papel);
   color: var(--color-tinta);
+}
+
+/* Títulos con la misma familia que el logo */
+.titulo {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
 }
 
 @media print {

@@ -124,6 +124,9 @@ def main(path):
         w("  join public.miembros m on m.nombre = s.miembro")
         w("  join public.roles r on r.nombre = s.rol")
         w("on conflict do nothing;\n")
+        w("-- Lo que cada quien hace según el Excel queda como su rol (requiere migración 0003)")
+        w("insert into public.miembro_roles (miembro_id, rol_id)")
+        w("select distinct miembro_id, rol_id from public.asignaciones on conflict do nothing;\n")
 
     # Rotaciones fijas detectadas (el turno más frecuente en el último tramo)
     w("-- Rotaciones (ajústalas desde el panel cuando cambien los turnos)")

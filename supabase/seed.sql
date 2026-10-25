@@ -589,6 +589,10 @@ select e.id, m.id, r.id from asig s
   join public.roles r on r.nombre = s.rol
 on conflict do nothing;
 
+-- Lo que cada quien hace según el Excel queda como su rol (requiere migración 0003)
+insert into public.miembro_roles (miembro_id, rol_id)
+select distinct miembro_id, rol_id from public.asignaciones on conflict do nothing;
+
 -- Rotaciones (ajústalas desde el panel cuando cambien los turnos)
 insert into public.rotaciones (nombre, rol_id, fecha_ancla)
 select 'Dominical', id, date '2027-10-01' from public.roles where nombre = 'Maestro(a) dominical';

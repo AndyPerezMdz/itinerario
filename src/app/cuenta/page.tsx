@@ -11,7 +11,7 @@ export default async function Cuenta() {
     <>
       <Nav nombre={perfil.nombre} rol={perfil.rol} />
       <main className="mx-auto max-w-md px-4 py-10">
-        <h1 className="text-2xl font-bold tracking-tight">Tu cuenta</h1>
+        <h1 className="titulo text-2xl font-semibold text-marca">Tu cuenta</h1>
         <p className="mb-6 mt-1 text-sm text-stone-500">{user.email}</p>
         <ContrasenaForm />
       </main>

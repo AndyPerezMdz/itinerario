@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { registrarse } from "./actions";
 
 const input =
-  "mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 outline-none focus:border-marca focus:ring-2 focus:ring-marca/20";
+  "mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 outline-none focus:border-marca focus:ring-2 focus:ring-oro/30";
 
 export function RegistroForm() {
   const [estado, action, pendiente] = useActionState(registrarse, null);
@@ -33,7 +33,7 @@ export function RegistroForm() {
       </label>
       {estado && !estado.ok && <p className="text-sm text-red-600">{estado.mensaje}</p>}
       <button disabled={pendiente}
-        className="w-full rounded-lg bg-marca py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60">
+        className="w-full rounded-lg bg-marca py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-marca-oscuro disabled:opacity-60">
         {pendiente ? "Creando cuenta…" : "Crear cuenta"}
       </button>
     </form>
