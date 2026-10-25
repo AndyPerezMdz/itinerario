@@ -6,6 +6,7 @@ import { ui } from "@/lib/ui";
 import { fechaLarga, hoyISO } from "@/lib/fechas";
 import { MiembroCampos } from "../MiembroCampos";
 import { borrarMiembro, guardarMiembro } from "../actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <form action={guardarMiembro} className={`${ui.card} space-y-5`}>
+      <Formulario action={guardarMiembro} className={`${ui.card} space-y-5`}>
         <input type="hidden" name="id" value={m.id} />
         <div className="flex items-center gap-3">
           <h1 className="titulo text-2xl font-semibold text-titulo">{m.nombre}</h1>
@@ -50,7 +51,7 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
           <Submit>Guardar</Submit>
           <Link href="/admin/miembros" className={ui.btnSec}>Volver</Link>
         </div>
-      </form>
+      </Formulario>
 
       <div className="space-y-6">
         <section className={ui.card}>
@@ -68,14 +69,14 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
           </ul>
         </section>
 
-        <form action={borrarMiembro} className={ui.card}>
+        <Formulario action={borrarMiembro} className={ui.card}>
           <input type="hidden" name="id" value={m.id} />
           <h2 className={ui.h2}>Borrar ficha</h2>
           <p className={`${ui.ayuda} mb-3`}>
             Se borran también sus asignaciones. Si solo ya no participa, mejor desmárcalo como activo.
           </p>
           <Submit variante="btnPeligro" confirmar={`¿Borrar a ${m.nombre} y todos sus turnos?`}>Borrar</Submit>
-        </form>
+        </Formulario>
       </div>
     </div>
   );

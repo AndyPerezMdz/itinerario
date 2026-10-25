@@ -8,6 +8,7 @@ export const ui = {
   btn: `${base} h-11 bg-gradient-to-b from-marca-medio to-marca px-5 text-white shadow-lg shadow-marca/25 ring-1 ring-inset ring-white/10 hover:-translate-y-px hover:shadow-xl hover:shadow-marca/30`,
   btnOro: `${base} h-11 bg-gradient-to-b from-oro-vivo to-oro px-5 text-marca-oscuro shadow-lg shadow-oro/30 ring-1 ring-inset ring-white/30 hover:-translate-y-px hover:shadow-xl`,
   btnSec: `${base} h-11 border border-stone-200 bg-superficie px-4 font-medium text-titulo shadow-sm hover:border-oro/60 hover:bg-oro-suave`,
+  btnRojo: `${base} h-11 bg-gradient-to-b from-[#e5484d] to-[#c62a2f] px-5 text-white shadow-lg shadow-[#c62a2f]/30 ring-1 ring-inset ring-white/10 hover:-translate-y-px hover:shadow-xl`,
   btnPeligro: `${base} h-11 border border-red-200 bg-superficie px-4 font-medium text-red-700 hover:bg-red-50`,
   btnMini: "rounded-lg px-2.5 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-oro-suave hover:text-titulo",
   card: "rounded-3xl border border-stone-200/70 bg-superficie p-6 shadow-[0_1px_2px_rgb(23_32_44/0.04),0_8px_24px_-12px_rgb(23_32_44/0.08)]",

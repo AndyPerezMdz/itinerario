@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/cinzel";
 import "./globals.css";
+import { Avisos } from "@/components/Formulario";
 
 export const metadata: Metadata = {
   title: { default: "Itinerario · La Luz del Mundo", template: "%s · Itinerario" },
@@ -20,7 +21,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: temaInicial }} />
       </head>
-      <body className="min-h-dvh font-sans antialiased">{children}</body>
+      <body className="min-h-dvh font-sans antialiased">
+        {children}
+        <Avisos />
+      </body>
     </html>
   );
 }

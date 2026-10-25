@@ -6,6 +6,7 @@ import { ui } from "@/lib/ui";
 import { fechaLarga } from "@/lib/fechas";
 import { EventoCampos } from "../EventoCampos";
 import { asignar, borrarEvento, guardarEvento, quitarAsignacion } from "../actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export default async function EditarEvento({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      <form action={guardarEvento} className={`${ui.card} space-y-5`}>
+      <Formulario action={guardarEvento} className={`${ui.card} space-y-5`}>
         <input type="hidden" name="id" value={e.id} />
         <div className="flex items-start gap-3">
           <span className="mt-1.5 size-3 rounded-full" style={{ background: act?.color }} />
@@ -71,7 +72,7 @@ export default async function EditarEvento({
           <Submit>Guardar</Submit>
           <Link href={`/?mes=${e.fecha.slice(0, 7)}`} className={ui.btnSec}>Volver</Link>
         </div>
-      </form>
+      </Formulario>
 
       <div className="space-y-6">
         <section className={ui.card}>
@@ -82,17 +83,17 @@ export default async function EditarEvento({
                 <span className="font-medium">{a.miembro?.nombre}</span>
                 <span className="text-stone-400">·</span>
                 <span className="text-stone-500">{a.rol?.nombre}</span>
-                <form action={quitarAsignacion} className="ml-auto">
+                <Formulario action={quitarAsignacion} silencioso className="ml-auto">
                   <input type="hidden" name="id" value={a.id} />
                   <input type="hidden" name="evento_id" value={e.id} />
                   <Submit variante="btnMini">Quitar</Submit>
-                </form>
+                </Formulario>
               </li>
             ))}
             {!asigs?.length && <li className="py-2 text-sm text-stone-400">Nadie asignado todavía.</li>}
           </ul>
 
-          <form action={asignar} className="mt-4 space-y-2 border-t border-stone-100 pt-4">
+          <Formulario action={asignar} silencioso className="mt-4 space-y-2 border-t border-stone-100 pt-4">
             <input type="hidden" name="evento_id" value={e.id} />
             <select name="rol_id" required defaultValue="" className={ui.input}>
               <option value="" disabled>Rol…</option>
@@ -114,10 +115,10 @@ export default async function EditarEvento({
             </select>
             <Submit variante="btnSec">+ Asignar</Submit>
             {ocupados.size > 0 && <p className="text-xs text-stone-400">Si ya estaba asignado con ese rol, no se duplica.</p>}
-          </form>
+          </Formulario>
         </section>
 
-        <form action={borrarEvento} className={ui.card}>
+        <Formulario action={borrarEvento} className={ui.card}>
           <input type="hidden" name="id" value={e.id} />
           <input type="hidden" name="fecha" value={e.fecha} />
           <h2 className={ui.h2}>Borrar evento</h2>
@@ -127,7 +128,7 @@ export default async function EditarEvento({
               : "Se borra con todo y sus responsables."}
           </p>
           <Submit variante="btnPeligro" confirmar="¿Borrar este evento? No hay deshacer.">Borrar</Submit>
-        </form>
+        </Formulario>
       </div>
     </div>
   );

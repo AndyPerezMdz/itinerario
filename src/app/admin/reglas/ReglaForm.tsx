@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DIAS_SEMANA, ui } from "@/lib/ui";
 import { Submit } from "@/components/Submit";
 import { crearRegla } from "./actions";
+import { Formulario } from "@/components/Formulario";
 
 type Op = { id: string; nombre: string };
 
@@ -11,7 +12,7 @@ export function ReglaForm({ actividades, rotaciones, hoy }: { actividades: Op[];
   const [tipo, setTipo] = useState("semanal");
 
   return (
-    <form action={crearRegla} className="grid gap-4 sm:grid-cols-2">
+    <Formulario action={crearRegla} className="grid gap-4 sm:grid-cols-2">
       <label className={ui.label}>
         Actividad
         <select name="actividad_id" required defaultValue="" className={ui.input}>
@@ -93,6 +94,6 @@ export function ReglaForm({ actividades, rotaciones, hoy }: { actividades: Op[];
       <div className="sm:col-span-2">
         <Submit>Crear regla</Submit>
       </div>
-    </form>
+    </Formulario>
   );
 }

@@ -2,6 +2,7 @@ import { requerirMiembro } from "@/lib/supabase/server";
 import { Submit } from "@/components/Submit";
 import { ui } from "@/lib/ui";
 import { cambiarRol, ligarFicha } from "./actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function Usuarios() {
             {fichaDe.has(p.id) ? (
               <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-700">Ficha: {fichaDe.get(p.id)}</span>
             ) : (
-              <form action={ligarFicha} className="flex items-center gap-1">
+              <Formulario action={ligarFicha} className="flex items-center gap-1">
                 <input type="hidden" name="perfil_id" value={p.id} />
                 <select name="miembro_id" required defaultValue="" className="rounded-lg border border-stone-300 px-2 py-1 text-xs">
                   <option value="" disabled>Ligar a ficha…</option>
@@ -43,17 +44,17 @@ export default async function Usuarios() {
                   {libres.map((f) => <option key={f.id} value={f.id}>{f.nombre}</option>)}
                 </select>
                 <Submit variante="btnMini">Ligar</Submit>
-              </form>
+              </Formulario>
             )}
 
-            <form action={cambiarRol} className="flex items-center gap-1">
+            <Formulario action={cambiarRol} className="flex items-center gap-1">
               <input type="hidden" name="id" value={p.id} />
               <select name="rol" defaultValue={p.rol === "admin" ? "admin" : "miembro"} className="rounded-lg border border-stone-300 px-2 py-1 text-xs">
                 <option value="miembro">Miembro</option>
                 <option value="admin">Admin</option>
               </select>
               <Submit variante="btnMini">Cambiar</Submit>
-            </form>
+            </Formulario>
           </li>
         ))}
       </ul>

@@ -5,6 +5,7 @@ import { ui } from "@/lib/ui";
 import { Plegable } from "@/components/Plegable";
 import { ReglaForm } from "./ReglaForm";
 import { alternarRegla, borrarRegla } from "./actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -70,15 +71,15 @@ export default async function Reglas() {
                 desde {fechaCorta(r.vigente_desde)}{r.vigente_hasta && ` hasta ${fechaCorta(r.vigente_hasta)}`}
               </span>
               <span className="ml-auto flex gap-1">
-                <form action={alternarRegla}>
+                <Formulario action={alternarRegla} silencioso>
                   <input type="hidden" name="id" value={r.id} />
                   <input type="hidden" name="activa" value={String(!r.activa)} />
                   <Submit variante="btnMini">{r.activa ? "Pausar" : "Activar"}</Submit>
-                </form>
-                <form action={borrarRegla}>
+                </Formulario>
+                <Formulario action={borrarRegla}>
                   <input type="hidden" name="id" value={r.id} />
                   <Submit variante="btnMini" confirmar="¿Borrar esta regla? Los eventos ya creados se quedan.">Borrar</Submit>
-                </form>
+                </Formulario>
               </span>
             </li>
           ))}

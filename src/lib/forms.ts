@@ -1,3 +1,4 @@
+import { unstable_rethrow } from "next/navigation";
 import { createClient, getSesion } from "@/lib/supabase/server";
 import { puedeEditar } from "@/lib/tipos";
 
@@ -8,6 +9,25 @@ export const num = (fd: FormData, k: string) => {
   return v === "" ? null : Number(v);
 };
 export const bool = (fd: FormData, k: string) => fd.get(k) === "on" || fd.get(k) === "true";
+
+/** Lo que regresa cada acción del admin. `t` hace que el aviso salga aunque el mensaje se repita. */
+export type Resultado = { ok: boolean; mensaje: string; t: number } | null;
+
+/**
+ * Corre la acción y, si algo falla, DEVUELVE el mensaje en vez de lanzarlo.
+ * (En producción, React esconde el texto de los errores lanzados → "Minified React error #441".)
+ * Los redirect() de Next sí se dejan pasar.
+ */
+export async function intentar(fn: () => Promise<void>, exito = "Listo."): Promise<Resultado> {
+  try {
+    await fn();
+    return { ok: true, mensaje: exito, t: Date.now() };
+  } catch (e) {
+    unstable_rethrow(e);
+    const mensaje = e instanceof Error && e.message ? e.message : "Algo falló. Intenta de nuevo.";
+    return { ok: false, mensaje, t: Date.now() };
+  }
+}
 
 /** Para server actions de admin: valida sesión y permiso antes de tocar nada. */
 export async function clienteEditor() {
@@ -21,7 +41,8 @@ export function ok(error: { message: string; code?: string } | null) {
   if (!error) return;
   const m = error.message;
   if (error.code === "23505" || /duplicate key/i.test(m)) throw new Error("Ya existe uno con ese nombre.");
-  if (error.code === "23503" || /foreign key/i.test(m)) throw new Error("No se puede: está en uso en otro lado.");
+  if (error.code === "23503" || /foreign key/i.test(m)) throw new Error("No se puede borrar: se está usando en otro lado.");
   if (error.code === "23514" || /check constraint/i.test(m)) throw new Error("Faltan datos o hay un valor inválido.");
+  if (error.code === "42501" || /row-level security|permission/i.test(m)) throw new Error("No tienes permiso para hacer eso.");
   throw new Error(m);
 }

@@ -4,6 +4,7 @@ import { hoyISO } from "@/lib/fechas";
 import { ui } from "@/lib/ui";
 import { Plegable } from "@/components/Plegable";
 import { agregarTurno, borrarRotacion, crearRotacion, guardarRotacion, quitarTurno, subirTurno } from "./actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -34,7 +35,7 @@ export default async function Rotaciones() {
       </div>
 
       <Plegable titulo="Nueva rotación" detalle="Ej. Lectura de carta, Fotografía, Limpieza…" acento>
-        <form action={crearRotacion} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+        <Formulario action={crearRotacion} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
           <label className={ui.label}>Nombre<input name="nombre" placeholder="Ej. Lectura de carta" required className={ui.input} /></label>
           <label className={ui.label}>
             Rol que se asigna
@@ -45,7 +46,7 @@ export default async function Rotaciones() {
           </label>
           <label className={ui.label}>Inicio<input type="date" name="fecha_ancla" defaultValue={hoyISO()} required className={ui.input} /></label>
           <Submit>Crear</Submit>
-        </form>
+        </Formulario>
       </Plegable>
 
       {(rotaciones ?? []).map((rot) => {
@@ -68,7 +69,7 @@ export default async function Rotaciones() {
               </span>
             }>
           <div className="space-y-4">
-            <form action={guardarRotacion} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
+            <Formulario action={guardarRotacion} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto_auto] sm:items-end">
               <input type="hidden" name="id" value={rot.id} />
               <label className={ui.label}>Nombre<input name="nombre" defaultValue={rot.nombre} required className={ui.input} /></label>
               <label className={ui.label}>
@@ -79,7 +80,7 @@ export default async function Rotaciones() {
               </label>
               <label className={ui.label}>Inicio<input type="date" name="fecha_ancla" defaultValue={rot.fecha_ancla} required className={ui.input} /></label>
               <Submit variante="btnSec">Guardar</Submit>
-            </form>
+            </Formulario>
 
             <ol className="divide-y divide-stone-100 rounded-2xl border border-stone-200">
               {turnos.map((t, i) => (
@@ -88,24 +89,24 @@ export default async function Rotaciones() {
                   <span className="font-medium">{t.etiqueta}</span>
                   <span className="ml-auto flex gap-1">
                     {i > 0 && (
-                      <form action={subirTurno}>
+                      <Formulario action={subirTurno} silencioso>
                         <input type="hidden" name="id" value={t.id} />
                         <input type="hidden" name="rotacion_id" value={rot.id} />
                         <Submit variante="btnMini">↑ Subir</Submit>
-                      </form>
+                      </Formulario>
                     )}
-                    <form action={quitarTurno}>
+                    <Formulario action={quitarTurno}>
                       <input type="hidden" name="id" value={t.id} />
                       <input type="hidden" name="rotacion_id" value={rot.id} />
                       <Submit variante="btnMini">Quitar</Submit>
-                    </form>
+                    </Formulario>
                   </span>
                 </li>
               ))}
               {!turnos.length && <li className="px-3 py-3 text-sm text-stone-400">Sin turnos. Agrega el primero abajo.</li>}
             </ol>
 
-            <form action={agregarTurno} className="space-y-2">
+            <Formulario action={agregarTurno} className="space-y-2">
               <input type="hidden" name="rotacion_id" value={rot.id} />
               <p className="text-sm font-medium text-stone-700">Nuevo turno: marca quién va junto</p>
               <div className="flex flex-wrap gap-2">
@@ -120,14 +121,14 @@ export default async function Rotaciones() {
               <div className="flex flex-wrap justify-between gap-2">
                 <Submit variante="btnSec">+ Agregar turno</Submit>
               </div>
-            </form>
+            </Formulario>
 
-            <form action={borrarRotacion} className="border-t border-stone-100 pt-3 text-right">
+            <Formulario action={borrarRotacion} className="border-t border-stone-100 pt-3 text-right">
               <input type="hidden" name="id" value={rot.id} />
               <Submit variante="btnMini" confirmar={`¿Borrar la rotación “${rot.nombre}”? Las reglas que la usan se quedan sin rotación.`}>
                 Borrar rotación
               </Submit>
-            </form>
+            </Formulario>
           </div>
           </Plegable>
         );

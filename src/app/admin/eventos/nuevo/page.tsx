@@ -5,6 +5,7 @@ import { ui } from "@/lib/ui";
 import { hoyISO } from "@/lib/fechas";
 import { EventoCampos } from "../EventoCampos";
 import { crearEvento } from "../actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export default async function NuevoEvento({ searchParams }: { searchParams: Prom
   const f = fecha && /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? fecha : hoyISO();
 
   return (
-    <form action={crearEvento} className={`${ui.card} max-w-2xl space-y-5`}>
+    <Formulario action={crearEvento} className={`${ui.card} max-w-2xl space-y-5`}>
       <div>
         <h1 className="titulo text-2xl font-semibold text-titulo">Nuevo evento</h1>
         <p className={ui.ayuda}>Después de guardarlo puedes asignarle responsables.</p>
@@ -30,6 +31,6 @@ export default async function NuevoEvento({ searchParams }: { searchParams: Prom
       <p className="text-xs text-stone-400">
         ¿No está la actividad? Agrégala en <Link href="/admin/catalogo" className="underline">Actividades y roles</Link>.
       </p>
-    </form>
+    </Formulario>
   );
 }

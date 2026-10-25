@@ -4,6 +4,7 @@ import { Submit } from "@/components/Submit";
 import { ui } from "@/lib/ui";
 import { MiembroCampos } from "./MiembroCampos";
 import { crearMiembro } from "./actions";
+import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
@@ -39,14 +40,14 @@ export default async function Miembros({ searchParams }: { searchParams: Promise
       </div>
 
       {nuevo && (
-        <form action={crearMiembro} className={`${ui.card} space-y-4`}>
+        <Formulario action={crearMiembro} className={`${ui.card} space-y-4`}>
           <h2 className={ui.h2}>Nuevo miembro</h2>
           <MiembroCampos roles={roles ?? []} />
           <div className="flex gap-2">
             <Submit>Guardar</Submit>
             <Link href="/admin/miembros" className={ui.btnSec}>Cancelar</Link>
           </div>
-        </form>
+        </Formulario>
       )}
 
       <div className="overflow-hidden rounded-2xl border border-stone-200/80 bg-superficie shadow-sm">
