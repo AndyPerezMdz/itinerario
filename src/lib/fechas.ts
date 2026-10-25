@@ -55,9 +55,18 @@ export function cuadricula(anio: number, mes: number) {
   };
 }
 
+/** "Domingo, 1 de noviembre" (solo la primera letra en mayúscula, como debe ser). */
 export function fechaLarga(f: string) {
   const d = new Date(f + "T12:00:00Z");
-  return new Intl.DateTimeFormat("es-MX", {
+  const t = new Intl.DateTimeFormat("es-MX", {
     weekday: "long", day: "numeric", month: "long", timeZone: "UTC",
   }).format(d);
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+/** "1 oct 2027" */
+export function fechaCorta(f: string) {
+  const d = new Date(f + "T12:00:00Z");
+  return new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })
+    .format(d).replace(".", "");
 }

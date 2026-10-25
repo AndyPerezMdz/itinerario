@@ -1,23 +1,23 @@
 "use client";
 
 import { useActionState } from "react";
+import { ui } from "@/lib/ui";
 import { cambiarContrasena } from "./actions";
 
 export function ContrasenaForm() {
   const [estado, action, pendiente] = useActionState(cambiarContrasena, null);
 
   return (
-    <form action={action} className="space-y-3 rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm">
-      <label className="block text-sm">
-        <span className="font-medium">Nueva contraseña</span>
-        <input name="password" type="password" minLength={8} required autoComplete="new-password"
-          className="mt-1 w-full rounded-lg border border-stone-300 px-3 py-2 outline-none focus:border-marca focus:ring-2 focus:ring-oro/30" />
+    <form action={action} className={`${ui.card} space-y-4`}>
+      <h2 className={ui.h2}>Cambiar contraseña</h2>
+      <label className={ui.label}>
+        Nueva contraseña
+        <input name="password" type="password" minLength={8} required autoComplete="new-password" placeholder="Mínimo 8 caracteres" className={ui.input} />
       </label>
       {estado && (
-        <p className={`text-sm ${estado.ok ? "text-green-700" : "text-red-600"}`}>{estado.mensaje}</p>
+        <p className={`rounded-xl px-3 py-2 text-sm ${estado.ok ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"}`}>{estado.mensaje}</p>
       )}
-      <button disabled={pendiente}
-        className="rounded-lg bg-marca px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-marca-oscuro disabled:opacity-60">
+      <button disabled={pendiente} className={ui.btn}>
         {pendiente ? "Guardando…" : "Guardar contraseña"}
       </button>
     </form>

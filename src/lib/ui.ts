@@ -1,18 +1,19 @@
 // Clases compartidas para que todos los formularios se vean igual.
+const base = "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition duration-150 active:scale-[.98] disabled:pointer-events-none disabled:opacity-60";
+
 export const ui = {
   input:
-    "mt-1 block w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-marca focus:ring-2 focus:ring-oro/30",
-  label: "block text-sm font-medium text-stone-700",
-  btn: "inline-flex items-center justify-center gap-1.5 rounded-lg bg-marca px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-marca-oscuro disabled:opacity-60",
-  btnSec:
-    "inline-flex items-center justify-center gap-1.5 rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-700 hover:border-oro hover:bg-oro-suave disabled:opacity-60",
-  btnPeligro:
-    "inline-flex items-center justify-center rounded-lg border border-red-200 bg-white px-3 py-2 text-sm text-red-700 hover:bg-red-50",
-  btnMini: "rounded-md px-2 py-1 text-xs text-stone-500 hover:bg-stone-100 hover:text-stone-800",
-  card: "rounded-2xl border border-stone-200/80 bg-white p-5 shadow-sm shadow-stone-900/[0.03]",
-  h2: "font-semibold text-marca",
+    "mt-1.5 block w-full rounded-xl border font-normal border-stone-200 bg-stone-50/80 px-3.5 py-2.5 text-[15px] text-tinta outline-none transition placeholder:text-stone-400 hover:border-stone-300 focus:border-oro focus:bg-white focus:ring-4 focus:ring-oro/15",
+  label: "block text-[13px] font-semibold text-marca/80",
+  btn: `${base} h-11 bg-gradient-to-b from-marca-medio to-marca px-5 text-white shadow-lg shadow-marca/25 ring-1 ring-inset ring-white/10 hover:-translate-y-px hover:shadow-xl hover:shadow-marca/30`,
+  btnOro: `${base} h-11 bg-gradient-to-b from-oro-vivo to-oro px-5 text-marca-oscuro shadow-lg shadow-oro/30 ring-1 ring-inset ring-white/30 hover:-translate-y-px hover:shadow-xl`,
+  btnSec: `${base} h-11 border border-stone-200 bg-white px-4 font-medium text-marca shadow-sm hover:border-oro/60 hover:bg-oro-suave`,
+  btnPeligro: `${base} h-11 border border-red-200 bg-white px-4 font-medium text-red-700 hover:bg-red-50`,
+  btnMini: "rounded-lg px-2.5 py-1.5 text-xs font-medium text-stone-500 transition hover:bg-oro-suave hover:text-marca",
+  card: "rounded-3xl border border-stone-200/70 bg-white p-6 shadow-[0_1px_2px_rgb(23_32_44/0.04),0_8px_24px_-12px_rgb(23_32_44/0.08)]",
+  h1: "titulo text-3xl font-semibold text-marca",
+  h2: "text-base font-semibold text-marca",
   ayuda: "mt-1 text-sm text-stone-500",
-  h1: "titulo text-2xl font-semibold text-marca",
 };
 
 export const DIAS_SEMANA = [

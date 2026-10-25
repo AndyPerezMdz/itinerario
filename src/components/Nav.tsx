@@ -14,13 +14,13 @@ export function Nav({ nombre, rol }: { nombre: string; rol: RolApp }) {
   const inicial = nombre.trim().charAt(0).toUpperCase() || "?";
 
   return (
-    <header className="no-print sticky top-0 z-20 bg-marca text-white shadow-md shadow-marca/20">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-2.5">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Image src={antorcha} alt="" className="h-8 w-auto" priority />
+    <header className="no-print sticky top-0 z-20 border-b border-oro/30 bg-marca/95 text-white shadow-lg shadow-marca/20 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-2.5">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <Image src={antorcha} alt="" className="h-9 w-auto" priority />
           <span className="leading-none">
             <span className="titulo block text-lg font-semibold">Itinerario</span>
-            <span className="block text-[10px] uppercase tracking-[0.2em] text-oro-claro">La Luz del Mundo</span>
+            <span className="mt-0.5 block text-[10px] uppercase tracking-[0.22em] text-oro-claro">La Luz del Mundo</span>
           </span>
         </Link>
 
@@ -28,20 +28,19 @@ export function Nav({ nombre, rol }: { nombre: string; rol: RolApp }) {
           <NavLinks links={links} />
         </div>
 
-        <div className="ml-auto flex items-center gap-2 text-sm">
-          <Link href="/cuenta" className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 hover:bg-white/10" title="Tu cuenta">
-            <span className="flex size-7 items-center justify-center rounded-full bg-oro text-xs font-bold text-marca-oscuro">
+        <div className="ml-auto flex items-center gap-1 text-sm">
+          <Link href="/cuenta" className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition hover:bg-white/10" title="Tu cuenta">
+            <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-b from-oro-claro to-oro text-sm font-bold text-marca-oscuro ring-2 ring-white/20">
               {inicial}
             </span>
             <span className="hidden max-w-32 truncate text-white/85 sm:inline">{nombre}</span>
           </Link>
           <form action={cerrarSesion}>
-            <button className="rounded-full px-3 py-1.5 text-white/70 hover:bg-white/10 hover:text-white">Salir</button>
+            <button className="rounded-full px-3 py-1.5 text-white/60 transition hover:bg-white/10 hover:text-white">Salir</button>
           </form>
         </div>
       </div>
-      {/* Celular: links abajo */}
-      <div className="border-t border-white/10 px-2 md:hidden">
+      <div className="border-t border-white/10 px-3 py-1.5 md:hidden">
         <NavLinks links={links} />
       </div>
     </header>

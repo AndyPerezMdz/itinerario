@@ -6,24 +6,64 @@
   --font-display: "Cinzel Variable", "Times New Roman", serif;
 
   --color-marca: #0a3156;
+  --color-marca-medio: #134574;
   --color-marca-oscuro: #061f38;
   --color-marca-claro: #e8eef6;
-  --color-oro: #9a8758;
-  --color-oro-claro: #cdbd8f;
-  --color-oro-suave: #f4efe2;
+  --color-oro: #a8925c;
+  --color-oro-vivo: #c7ae6e;
+  --color-oro-claro: #dccb98;
+  --color-oro-suave: #f6f0e1;
   --color-tinta: #17202c;
-  --color-papel: #f7f4ee;
+  --color-papel: #f7f3eb;
 }
 
-body {
-  background: var(--color-papel);
-  color: var(--color-tinta);
+@layer base {
+  body {
+    background: var(--color-papel);
+    color: var(--color-tinta);
+  }
+
+  /* Selects con flecha propia (los del navegador se ven de 2004) */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a8925c'%3E%3Cpath d='M5.3 7.3a1 1 0 0 1 1.4 0L10 10.6l3.3-3.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 0-1.4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.1rem;
+    padding-right: 2.25rem !important;
+  }
+
+  input[type="checkbox"] {
+    accent-color: var(--color-marca);
+  }
+
+  ::selection {
+    background: var(--color-oro-claro);
+    color: var(--color-marca-oscuro);
+  }
 }
 
 /* Títulos con la misma familia que el logo */
 .titulo {
   font-family: var(--font-display);
   letter-spacing: 0.02em;
+}
+
+/* Los rayos de luz del logo, como textura */
+.rayos {
+  background-image: repeating-conic-gradient(
+    from 90deg at 50% -35%,
+    rgb(220 203 152 / 0.16) 0deg 0.5deg,
+    transparent 0.5deg 6deg
+  );
+  mask-image: linear-gradient(to bottom, black 20%, transparent 95%);
+}
+
+.sin-scroll {
+  scrollbar-width: none;
+}
+.sin-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 @media print {

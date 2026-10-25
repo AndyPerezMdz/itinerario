@@ -12,6 +12,7 @@ export function FiltroPersona({
   const router = useRouter();
   const params = useSearchParams();
   const actual = params.get("persona") ?? "";
+  const otra = actual && actual !== miId;
 
   function cambiar(valor: string) {
     const p = new URLSearchParams(params);
@@ -20,22 +21,19 @@ export function FiltroPersona({
     router.push(`/?${p.toString()}`);
   }
 
+  const pill = (activo: boolean) =>
+    `rounded-full px-4 py-1.5 text-sm font-medium transition ${
+      activo ? "bg-marca text-white shadow-md shadow-marca/25" : "text-stone-600 hover:bg-oro-suave hover:text-marca"
+    }`;
+
   return (
-    <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-white p-0.5 text-sm shadow-sm">
-      <button onClick={() => cambiar("")}
-        className={`rounded-md px-3 py-1 ${!actual ? "bg-marca text-white" : "hover:bg-stone-100"}`}>
-        Todos
-      </button>
-      {miId && (
-        <button onClick={() => cambiar(miId)}
-          className={`rounded-md px-3 py-1 ${actual === miId ? "bg-marca text-white" : "hover:bg-stone-100"}`}>
-          Solo yo
-        </button>
-      )}
+    <div className="flex items-center gap-1 rounded-full border border-stone-200/80 bg-white p-1 shadow-sm">
+      <button onClick={() => cambiar("")} className={pill(!actual)}>Todos</button>
+      {miId && <button onClick={() => cambiar(miId)} className={pill(actual === miId)}>Solo yo</button>}
       <select
-        value={actual && actual !== miId ? actual : ""}
+        value={otra ? actual : ""}
         onChange={(e) => cambiar(e.target.value)}
-        className={`rounded-md bg-transparent px-2 py-1 outline-none ${actual && actual !== miId ? "bg-marca text-white" : ""}`}
+        className={`${pill(!!otra)} cursor-pointer outline-none`}
         aria-label="Ver a otra persona"
       >
         <option value="">Persona…</option>

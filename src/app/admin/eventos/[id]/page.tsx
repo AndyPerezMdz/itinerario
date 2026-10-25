@@ -47,7 +47,7 @@ export default async function EditarEvento({
           <span className="mt-1.5 size-3 rounded-full" style={{ background: act?.color }} />
           <div>
             <h1 className="titulo text-2xl font-semibold text-marca">{e.titulo ?? act?.nombre}</h1>
-            <p className="text-sm capitalize text-stone-500">{fechaLarga(e.fecha)}</p>
+            <p className="text-sm text-stone-500">{fechaLarga(e.fecha)}</p>
           </div>
           {e.regla_id && (
             <span className="ml-auto rounded-full bg-stone-100 px-2 py-0.5 text-xs text-stone-500">

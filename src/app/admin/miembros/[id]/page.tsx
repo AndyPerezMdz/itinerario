@@ -61,7 +61,7 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
                 <Link href={`/admin/eventos/${t.evento!.id}`} className="hover:underline">
                   <span className="font-medium">{t.evento!.titulo ?? t.evento!.actividad?.nombre}</span>
                 </Link>
-                <div className="text-xs capitalize text-stone-500">{fechaLarga(t.evento!.fecha)} · {t.rol?.nombre}</div>
+                <div className="text-xs text-stone-500">{fechaLarga(t.evento!.fecha)} · {t.rol?.nombre}</div>
               </li>
             ))}
             {!proximos.length && <li className="text-stone-400">Sin turnos próximos.</li>}

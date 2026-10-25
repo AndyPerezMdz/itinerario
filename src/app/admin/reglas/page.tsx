@@ -1,6 +1,6 @@
 import { requerirMiembro } from "@/lib/supabase/server";
 import { Submit } from "@/components/Submit";
-import { hoyISO } from "@/lib/fechas";
+import { fechaCorta, hoyISO } from "@/lib/fechas";
 import { ui } from "@/lib/ui";
 import { ReglaForm } from "./ReglaForm";
 import { alternarRegla, borrarRegla } from "./actions";
@@ -57,7 +57,7 @@ export default async function Reglas() {
               {r.rotacion && <span className="rounded-full bg-violet-50 px-2 py-0.5 text-xs text-violet-700">Rotación: {r.rotacion.nombre}</span>}
               {r.reemplaza && <span className="rounded-full bg-sky-50 px-2 py-0.5 text-xs text-sky-700">Reemplaza: {r.reemplaza.nombre}</span>}
               <span className="text-xs text-stone-400">
-                desde {r.vigente_desde}{r.vigente_hasta && ` hasta ${r.vigente_hasta}`}
+                desde {fechaCorta(r.vigente_desde)}{r.vigente_hasta && ` hasta ${fechaCorta(r.vigente_hasta)}`}
               </span>
               <span className="ml-auto flex gap-1">
                 <form action={alternarRegla}>
