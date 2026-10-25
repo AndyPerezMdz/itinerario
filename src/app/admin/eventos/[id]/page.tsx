@@ -5,7 +5,8 @@ import { Submit } from "@/components/Submit";
 import { ui } from "@/lib/ui";
 import { fechaLarga } from "@/lib/fechas";
 import { EventoCampos } from "../EventoCampos";
-import { asignar, borrarEvento, guardarEvento, quitarAsignacion } from "../actions";
+import { borrarEvento, guardarEvento, quitarAsignacion } from "../actions";
+import { AsignarForm } from "../AsignarForm";
 import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
@@ -93,29 +94,16 @@ export default async function EditarEvento({
             {!asigs?.length && <li className="py-2 text-sm text-stone-400">Nadie asignado todavía.</li>}
           </ul>
 
-          <Formulario action={asignar} silencioso className="mt-4 space-y-2 border-t border-stone-100 pt-4">
-            <input type="hidden" name="evento_id" value={e.id} />
-            <select name="rol_id" required defaultValue="" className={ui.input}>
-              <option value="" disabled>Rol…</option>
-              {(roles ?? []).map((r) => <option key={r.id} value={r.id}>{r.nombre}</option>)}
-            </select>
-            <select name="miembro_id" required defaultValue="" className={ui.input}>
-              <option value="" disabled>Persona…</option>
-              {(miembros ?? []).map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.nombre}
-                  {(m.miembro_roles as { rol_id: string }[]).length
-                    ? ` (${(m.miembro_roles as { rol_id: string }[])
-                        .map((x) => roles?.find((r) => r.id === x.rol_id)?.nombre)
-                        .filter(Boolean)
-                        .join(", ")})`
-                    : ""}
-                </option>
-              ))}
-            </select>
-            <Submit variante="btnSec">+ Asignar</Submit>
-            {ocupados.size > 0 && <p className="text-xs text-stone-400">Si ya estaba asignado con ese rol, no se duplica.</p>}
-          </Formulario>
+          <AsignarForm
+            eventoId={e.id}
+            roles={roles ?? []}
+            miembros={(miembros ?? []).map((m) => ({
+              id: m.id,
+              nombre: m.nombre,
+              roles: (m.miembro_roles as { rol_id: string }[]).map((x) => x.rol_id),
+            }))}
+            yaAsignados={[...ocupados]}
+          />
         </section>
 
         <Formulario action={borrarEvento} className={ui.card}>

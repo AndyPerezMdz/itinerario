@@ -69,6 +69,10 @@ export async function asignar(_prev: Resultado, fd: FormData): Promise<Resultado
     const miembro_id = txt(fd, "miembro_id");
     const rol_id = txt(fd, "rol_id");
     if (!miembro_id || !rol_id) throw new Error("Elige persona y rol.");
+    // Solo quien tiene ese rol en su ficha
+    const { data: tiene } = await supabase
+      .from("miembro_roles").select("rol_id").eq("miembro_id", miembro_id).eq("rol_id", rol_id).maybeSingle();
+    if (!tiene) throw new Error("Esa persona no tiene ese rol. Márcaselo en su ficha primero.");
     const { error } = await supabase
       .from("asignaciones")
       .upsert({ evento_id, miembro_id, rol_id }, { onConflict: "evento_id,miembro_id,rol_id", ignoreDuplicates: true });

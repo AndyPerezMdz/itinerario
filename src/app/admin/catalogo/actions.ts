@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { clienteEditor, intentar, type Resultado, ok, opt, txt } from "@/lib/forms";
+import { clienteEditor, intentar, ok, opt, Pregunta, type Resultado, txt } from "@/lib/forms";
+import { hoyISO } from "@/lib/fechas";
 
 const refrescar = () => {
   revalidatePath("/admin/catalogo");
@@ -53,9 +54,41 @@ export async function guardarRol(_prev: Resultado, fd: FormData): Promise<Result
 export async function borrarRol(_prev: Resultado, fd: FormData): Promise<Resultado> {
   return intentar(async () => {
     const supabase = await clienteEditor();
-    const { error } = await supabase.from("roles").delete().eq("id", txt(fd, "id"));
-    if (error?.code === "23503") throw new Error("Ese rol tiene turnos asignados, así que no se puede borrar. Si solo está mal el nombre, cámbialo y dale Guardar.");
-    ok(error);
+    const id = txt(fd, "id");
+    const decision = txt(fd, "decision");
+
+    const [{ data: rol }, total, futuros, rotaciones] = await Promise.all([
+      supabase.from("roles").select("nombre").eq("id", id).single(),
+      supabase.from("asignaciones").select("id", { count: "exact", head: true }).eq("rol_id", id),
+      supabase.from("asignaciones").select("id, evento:eventos!inner(fecha)", { count: "exact", head: true })
+        .eq("rol_id", id).gte("evento.fecha", hoyISO()),
+      supabase.from("rotaciones").select("nombre").eq("rol_id", id),
+    ]);
+    if (!rol) throw new Error("Ese rol ya no existe.");
+
+    const n = total.count ?? 0;
+    const f = futuros.count ?? 0;
+    const rots = (rotaciones.data ?? []).map((r) => r.nombre);
+
+    if (decision !== "borrar") {
+      const partes: string[] = [];
+      if (n) partes.push(`${n} ${n === 1 ? "turno" : "turnos"} en el calendario (${n - f} pasados y ${f} próximos)`);
+      if (rots.length) partes.push(`${rots.length === 1 ? "la rotación" : "las rotaciones"} ${rots.map((r) => `“${r}”`).join(", ")}`);
+      throw new Pregunta({
+        titulo: partes.length ? `“${rol.nombre}” está en uso` : `¿Borrar el rol “${rol.nombre}”?`,
+        detalle: partes.length
+          ? `Tiene ${partes.join(" y ")}. Si lo borras, se borra todo eso también. Si solo está mal el nombre, mejor cámbialo.`
+          : "Nadie lo usa, así que no se pierde nada.",
+        campo: "decision",
+        opciones: [{ valor: "borrar", texto: partes.length ? "Borrar todo" : "Sí, borrar", peligro: true }],
+      });
+    }
+
+    // Orden: turnos → rotaciones (sus turnos se van en cascada) → rol
+    ok((await supabase.from("asignaciones").delete().eq("rol_id", id)).error);
+    ok((await supabase.from("rotaciones").delete().eq("rol_id", id)).error);
+    ok((await supabase.from("roles").delete().eq("id", id)).error);
     refrescar();
+    revalidatePath("/admin/rotaciones");
   }, "Rol borrado.");
 }

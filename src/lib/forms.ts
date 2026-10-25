@@ -10,8 +10,22 @@ export const num = (fd: FormData, k: string) => {
 };
 export const bool = (fd: FormData, k: string) => fd.get(k) === "on" || fd.get(k) === "true";
 
-/** Lo que regresa cada acción del admin. `t` hace que el aviso salga aunque el mensaje se repita. */
-export type Resultado = { ok: boolean; mensaje: string; t: number } | null;
+/** Opción de un modal que la acción pide antes de continuar. */
+export type Opcion = { valor: string; texto: string; peligro?: boolean };
+export type Confirmacion = { titulo: string; detalle?: string; campo: string; opciones: Opcion[] };
+
+/**
+ * Lo que regresa cada acción del admin. `t` hace que el aviso salga aunque el mensaje se repita.
+ * Si trae `confirmar`, el formulario abre un modal y reenvía con `campo=valor` elegido.
+ */
+export type Resultado = { ok: boolean; mensaje: string; t: number; confirmar?: Confirmacion } | null;
+
+/** Lánzala dentro de intentar() para pedirle al admin que confirme algo antes de seguir. */
+export class Pregunta extends Error {
+  constructor(public confirmacion: Confirmacion) {
+    super(confirmacion.titulo);
+  }
+}
 
 /**
  * Corre la acción y, si algo falla, DEVUELVE el mensaje en vez de lanzarlo.
@@ -24,6 +38,7 @@ export async function intentar(fn: () => Promise<void>, exito = "Listo."): Promi
     return { ok: true, mensaje: exito, t: Date.now() };
   } catch (e) {
     unstable_rethrow(e);
+    if (e instanceof Pregunta) return { ok: false, mensaje: "", t: Date.now(), confirmar: e.confirmacion };
     const mensaje = e instanceof Error && e.message ? e.message : "Algo falló. Intenta de nuevo.";
     return { ok: false, mensaje, t: Date.now() };
   }

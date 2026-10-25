@@ -1,15 +1,22 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import type { Resultado } from "@/lib/forms";
+import { createContext, startTransition, useActionState, useContext, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import type { Confirmacion, Resultado } from "@/lib/forms";
+import { ModalConfirmar } from "./Modal";
 
 type Accion = (prev: Resultado, fd: FormData) => Promise<Resultado>;
+
+/** Para que <Submit> sepa que el formulario está enviando (useFormStatus no aplica aquí). */
+const Enviando = createContext(false);
+export const useEnviando = () => useContext(Enviando);
 type Detalle = { resultado: NonNullable<Resultado>; silencioso: boolean };
 
 /**
- * <form> para acciones del admin. El resultado (éxito o error) se manda a <Avisos />,
- * que vive en el layout: así el aviso sale aunque este formulario desaparezca
- * (p. ej. al borrar la fila donde estaba).
+ * <form> para acciones del admin.
+ * - El resultado (éxito o error) se manda a <Avisos />, que vive en el layout:
+ *   así el aviso sale aunque este formulario desaparezca (p. ej. al borrar su fila).
+ * - Si la acción pide confirmación (Pregunta), abre un modal y reenvía con la opción elegida.
  */
 export function Formulario({
   action,
@@ -23,15 +30,49 @@ export function Formulario({
   /** true = no avisar cuando sale bien (acciones chiquitas tipo "subir turno") */
   silencioso?: boolean;
 }) {
-  const [, formAction] = useActionState(async (prev: Resultado, fd: FormData) => {
+  const form = useRef<HTMLFormElement>(null);
+  const [pregunta, setPregunta] = useState<Confirmacion | null>(null);
+  const [extra, setExtra] = useState<{ campo: string; valor: string } | null>(null);
+
+  const [, despachar, pendiente] = useActionState(async (prev: Resultado, fd: FormData) => {
     const r = await action(prev, fd);
-    if (r) window.dispatchEvent(new CustomEvent<Detalle>("aviso", { detail: { resultado: r, silencioso } }));
+    setExtra(null);
+    if (r?.confirmar) setPregunta(r.confirmar);
+    else if (r) window.dispatchEvent(new CustomEvent<Detalle>("aviso", { detail: { resultado: r, silencioso } }));
     return r;
   }, null);
 
+  // Se envía a mano (no con action={...}) porque React 19 RESETEA el formulario
+  // después de cada acción: si la acción pregunta algo, al confirmar se perdían
+  // los cambios (p. ej. la casilla de rol que desmarcaste volvía a marcada).
+  function enviar(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLElement | null;
+    const fd = new FormData(e.currentTarget, submitter);
+    startTransition(() => despachar(fd));
+  }
+
   return (
-    <form action={formAction} className={className}>
-      {children}
+    <form ref={form} onSubmit={enviar} className={className}>
+      <Enviando.Provider value={pendiente}>{children}</Enviando.Provider>
+      {extra && <input type="hidden" name={extra.campo} value={extra.valor} />}
+      {pregunta && (
+        <ModalConfirmar
+          titulo={pregunta.titulo}
+          detalle={pregunta.detalle}
+          opciones={pregunta.opciones}
+          onCancelar={() => setPregunta(null)}
+          onElegir={(valor) => {
+            const campo = pregunta.campo;
+            // Pinta el input oculto antes de reenviar
+            flushSync(() => {
+              setPregunta(null);
+              setExtra({ campo, valor });
+            });
+            form.current?.requestSubmit();
+          }}
+        />
+      )}
     </form>
   );
 }

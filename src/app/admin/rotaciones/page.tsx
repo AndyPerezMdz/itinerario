@@ -51,12 +51,9 @@ export default async function Rotaciones() {
 
       {(rotaciones ?? []).map((rot) => {
         const turnos = [...rot.rotacion_turnos].sort((a, b) => a.posicion - b.posicion);
-        // Primero los que tienen el rol de la rotación
-        const candidatos = [...(miembros ?? [])].sort(
-          (a, b) =>
-            Number(b.miembro_roles.some((r) => r.rol_id === rot.rol_id)) -
-            Number(a.miembro_roles.some((r) => r.rol_id === rot.rol_id)),
-        );
+        // Solo quien tiene el rol de esta rotación en su ficha
+        const candidatos = (miembros ?? []).filter((m) => m.miembro_roles.some((r) => r.rol_id === rot.rol_id));
+        const nombreRol = roles?.find((r) => r.id === rot.rol_id)?.nombre ?? "ese rol";
         return (
           <Plegable key={rot.id}
             titulo={rot.nombre}
@@ -109,6 +106,11 @@ export default async function Rotaciones() {
             <Formulario action={agregarTurno} className="space-y-2">
               <input type="hidden" name="rotacion_id" value={rot.id} />
               <p className="text-sm font-medium text-stone-700">Nuevo turno: marca quién va junto</p>
+              {!candidatos.length && (
+                <p className="text-sm text-stone-500">
+                  Nadie tiene el rol “{nombreRol}”. Márcaselo a alguien en <a href="/admin/miembros" className="font-medium text-titulo underline">Miembros</a>.
+                </p>
+              )}
               <div className="flex flex-wrap gap-2">
                 {candidatos.map((m) => (
                   <label key={m.id}

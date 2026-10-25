@@ -41,6 +41,12 @@ export async function agregarTurno(_prev: Resultado, fd: FormData): Promise<Resu
     const miembros = fd.getAll("miembros").map(String).filter(Boolean);
     if (!miembros.length) throw new Error("Marca al menos a una persona para el turno.");
 
+    // Solo gente con el rol de la rotación
+    const { data: rot } = await supabase.from("rotaciones").select("rol_id").eq("id", rotacion_id).single();
+    const { data: conRol } = await supabase
+      .from("miembro_roles").select("miembro_id").eq("rol_id", rot?.rol_id ?? "").in("miembro_id", miembros);
+    if ((conRol ?? []).length !== miembros.length) throw new Error("Alguien de los que marcaste no tiene el rol de esta rotación.");
+
     const { data: ultimo } = await supabase
       .from("rotacion_turnos").select("posicion").eq("rotacion_id", rotacion_id)
       .order("posicion", { ascending: false }).limit(1).maybeSingle();

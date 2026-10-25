@@ -5,12 +5,16 @@ import { Submit } from "@/components/Submit";
 import { ui } from "@/lib/ui";
 import { fechaLarga, hoyISO } from "@/lib/fechas";
 import { MiembroCampos } from "../MiembroCampos";
-import { borrarMiembro, guardarMiembro } from "../actions";
+import { borrarMiembro, guardarMiembro, quitarTurnosSinRol } from "../actions";
 import { Formulario } from "@/components/Formulario";
 
 export const dynamic = "force-dynamic";
 
-type Turno = { evento: { id: string; fecha: string; titulo: string | null; actividad: { nombre: string } | null } | null; rol: { nombre: string } | null };
+type Turno = {
+  rol_id: string;
+  evento: { id: string; fecha: string; titulo: string | null; actividad: { nombre: string } | null } | null;
+  rol: { nombre: string } | null;
+};
 
 export default async function EditarMiembro({ params }: { params: Promise<{ id: string }> }) {
   const { supabase } = await requerirMiembro();
@@ -22,17 +26,21 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
       .eq("id", id).maybeSingle(),
     supabase.from("roles").select("id, nombre").order("nombre"),
     supabase.from("asignaciones")
-      .select("evento:eventos!inner(id, fecha, titulo, actividad:actividades(nombre)), rol:roles(nombre)")
+      .select("rol_id, evento:eventos!inner(id, fecha, titulo, actividad:actividades(nombre)), rol:roles(nombre)")
       .eq("miembro_id", id)
       .gte("evento.fecha", hoyISO())
       .returns<Turno[]>(),
   ]);
   if (!m) notFound();
 
-  const proximos = (turnos ?? [])
+  const susRoles = new Set((m.miembro_roles as { rol_id: string }[]).map((r) => r.rol_id));
+  const todos = (turnos ?? [])
     .filter((t) => t.evento)
-    .sort((a, b) => a.evento!.fecha.localeCompare(b.evento!.fecha))
-    .slice(0, 8);
+    .sort((a, b) => a.evento!.fecha.localeCompare(b.evento!.fecha));
+  const proximos = todos.slice(0, 8);
+  // Turnos que quedaron colgados: tiene el turno pero ya no el rol
+  const sinRol = todos.filter((t) => !susRoles.has(t.rol_id));
+  const rolesSinRol = [...new Set(sinRol.map((t) => t.rol?.nombre ?? "?"))];
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -54,6 +62,24 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
       </Formulario>
 
       <div className="space-y-6">
+        {sinRol.length > 0 && (
+          <Formulario action={quitarTurnosSinRol} className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+            <input type="hidden" name="id" value={m.id} />
+            <h2 className="font-semibold text-amber-900">
+              {sinRol.length} {sinRol.length === 1 ? "turno" : "turnos"} sin rol
+            </h2>
+            <p className="mt-1 text-sm text-amber-900/80">
+              Tiene turnos próximos como {rolesSinRol.join(", ")}, pero ese rol ya no está en su ficha. Por eso sigue saliendo en el calendario.
+            </p>
+            <div className="mt-3">
+              <Submit variante="btnPeligro"
+                confirmar={`¿Quitar ${sinRol.length === 1 ? "ese turno" : `esos ${sinRol.length} turnos`} del calendario? Los que ya pasaron se quedan.`}>
+                Quitarlos del calendario
+              </Submit>
+            </div>
+          </Formulario>
+        )}
+
         <section className={ui.card}>
           <h2 className={ui.h2}>Próximos turnos</h2>
           <ul className="mt-3 space-y-2 text-sm">
@@ -62,7 +88,10 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
                 <Link href={`/admin/eventos/${t.evento!.id}`} className="hover:underline">
                   <span className="font-medium">{t.evento!.titulo ?? t.evento!.actividad?.nombre}</span>
                 </Link>
-                <div className="text-xs text-stone-500">{fechaLarga(t.evento!.fecha)} · {t.rol?.nombre}</div>
+                <div className="text-xs text-stone-500">
+                  {fechaLarga(t.evento!.fecha)} · {t.rol?.nombre}
+                  {!susRoles.has(t.rol_id) && <span className="ml-1 rounded-full bg-amber-50 px-1.5 text-amber-700">sin rol</span>}
+                </div>
               </li>
             ))}
             {!proximos.length && <li className="text-stone-400">Sin turnos próximos.</li>}

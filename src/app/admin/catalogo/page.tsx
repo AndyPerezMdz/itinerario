@@ -63,7 +63,7 @@ export default async function Catalogo() {
               </Formulario>
               <Formulario action={borrarRol}>
                 <input type="hidden" name="id" value={r.id} />
-                <Submit variante="btnMini" confirmar={`¿Borrar el rol “${r.nombre}”? Solo se puede si nadie tiene turnos con ese rol.`}>Borrar</Submit>
+                <Submit variante="btnMini">Borrar</Submit>
               </Formulario>
             </li>
           ))}
