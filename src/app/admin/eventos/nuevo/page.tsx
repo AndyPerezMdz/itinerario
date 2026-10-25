@@ -19,7 +19,7 @@ export default async function NuevoEvento({ searchParams }: { searchParams: Prom
   return (
     <form action={crearEvento} className={`${ui.card} max-w-2xl space-y-5`}>
       <div>
-        <h1 className="titulo text-2xl font-semibold text-marca">Nuevo evento</h1>
+        <h1 className="titulo text-2xl font-semibold text-titulo">Nuevo evento</h1>
         <p className={ui.ayuda}>Después de guardarlo puedes asignarle responsables.</p>
       </div>
       <EventoCampos actividades={actividades ?? []} e={{ actividad_id: "", fecha: f, hora: null, titulo: null, notas: null }} />

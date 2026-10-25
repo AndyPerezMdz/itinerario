@@ -86,11 +86,22 @@ export default async function Calendario({
         {/* Encabezado */}
         <section className="relative mb-5 overflow-hidden rounded-3xl bg-gradient-to-br from-marca-medio via-marca to-marca-oscuro text-white shadow-xl shadow-marca/25">
           <div className="rayos pointer-events-none absolute inset-0" />
-          <div className="relative flex flex-wrap items-end gap-x-8 gap-y-5 p-6 sm:p-8">
+          <div className="relative space-y-5 p-6 sm:p-8">
+            {/* La navegación va en la primera línea, a la derecha: no se mueve sin importar el mes */}
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-oro-claro">
-                {nombrePersona ? `Actividades de ${nombrePersona}` : "Calendario de actividades"}
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="truncate text-[11px] font-semibold uppercase tracking-[0.3em] text-oro-claro">
+                  {nombrePersona ? `Actividades de ${nombrePersona}` : "Calendario de actividades"}
+                </p>
+                <div className="no-print flex shrink-0 items-center gap-2">
+                  <Link href={q(mesClave(anio, mes - 1))} className={btnMes} aria-label="Mes anterior">‹</Link>
+                  <Link href={persona ? `/?persona=${persona}` : "/"}
+                    className="flex h-10 items-center rounded-full bg-white/10 px-4 text-sm font-medium ring-1 ring-inset ring-white/15 transition hover:bg-white/20">
+                    Hoy
+                  </Link>
+                  <Link href={q(mesClave(anio, mes + 1))} className={btnMes} aria-label="Mes siguiente">›</Link>
+                </div>
+              </div>
               <h1 className="titulo mt-1 text-4xl font-semibold sm:text-5xl">
                 {MESES[mes - 1]} <span className="text-oro-claro">{anio}</span>
               </h1>
@@ -100,27 +111,14 @@ export default async function Calendario({
               </p>
             </div>
 
-            <div className="no-print flex items-center gap-2">
-              <Link href={q(mesClave(anio, mes - 1))} className={btnMes} aria-label="Mes anterior">‹</Link>
-              <Link href={persona ? `/?persona=${persona}` : "/"}
-                className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium ring-1 ring-inset ring-white/15 transition hover:bg-white/20">
-                Hoy
-              </Link>
-              <Link href={q(mesClave(anio, mes + 1))} className={btnMes} aria-label="Mes siguiente">›</Link>
-            </div>
-
             {proximo?.evento && (
-              <div className="w-full rounded-2xl bg-white/[0.07] p-4 ring-1 ring-inset ring-oro-claro/25 backdrop-blur-sm sm:ml-auto sm:w-auto sm:min-w-72">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-oro-claro">Tu próximo turno</span>
-                  <span className="rounded-full bg-oro-vivo px-2.5 py-0.5 text-xs font-bold text-marca-oscuro">
-                    {cuantoFalta(proximo.evento.fecha, hoy)}
-                  </span>
-                </div>
-                <div className="mt-2 text-lg font-semibold">{proximo.evento.titulo ?? proximo.evento.actividad?.nombre}</div>
-                <div className="text-sm text-white/65">
-                  {fechaLarga(proximo.evento.fecha)} · {proximo.rol?.nombre}
-                </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/[0.07] px-4 py-3 ring-1 ring-inset ring-oro-claro/25 backdrop-blur-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-oro-claro">Tu próximo turno</span>
+                <span className="font-semibold">{proximo.evento.titulo ?? proximo.evento.actividad?.nombre}</span>
+                <span className="text-sm text-white/65">{fechaLarga(proximo.evento.fecha)} · {proximo.rol?.nombre}</span>
+                <span className="ml-auto rounded-full bg-oro-vivo px-2.5 py-0.5 text-xs font-bold text-marca-oscuro">
+                  {cuantoFalta(proximo.evento.fecha, hoy)}
+                </span>
               </div>
             )}
           </div>
@@ -137,7 +135,7 @@ export default async function Calendario({
         </div>
 
         {/* Escritorio: cuadrícula */}
-        <div className="hidden overflow-hidden rounded-3xl border border-stone-200/70 bg-white shadow-[0_8px_30px_-12px_rgb(23_32_44/0.12)] md:block">
+        <div className="hidden overflow-hidden rounded-3xl border border-stone-200/70 bg-superficie shadow-[0_8px_30px_-12px_rgb(23_32_44/0.12)] md:block">
           <div className="grid grid-cols-7 border-b border-stone-200/70 text-[11px] font-bold uppercase tracking-[0.18em]">
             {DIAS.map((d, i) => (
               <div key={d} className={`px-3 py-3 ${i === 6 ? "bg-oro-suave/70 text-oro" : "text-stone-400"}`}>{d}</div>
@@ -156,7 +154,7 @@ export default async function Calendario({
                     <div className="mb-1.5 flex items-center gap-1.5">
                       <span className={`flex size-7 items-center justify-center rounded-full text-[13px] font-semibold ${
                         esHoy ? "bg-gradient-to-b from-oro-vivo to-oro text-marca-oscuro shadow-md shadow-oro/40"
-                          : enMes ? (i === 6 ? "text-oro" : "text-marca") : "text-stone-300"
+                          : enMes ? (i === 6 ? "text-oro" : "text-titulo") : "text-stone-300"
                       }`}>
                         {+f.slice(8)}
                       </span>
@@ -188,9 +186,9 @@ export default async function Calendario({
             const domingo = diaSemana(f) === 6;
             return (
               <section key={f}
-                className={`flex gap-3 rounded-3xl border bg-white p-3 shadow-sm ${esHoy ? "border-oro-vivo ring-2 ring-oro-vivo/30" : "border-stone-200/70"}`}>
+                className={`flex gap-3 rounded-3xl border bg-superficie p-3 shadow-sm ${esHoy ? "border-oro-vivo ring-2 ring-oro-vivo/30" : "border-stone-200/70"}`}>
                 <div className={`flex w-14 shrink-0 flex-col items-center justify-center rounded-2xl py-2 ${
-                  esHoy ? "bg-gradient-to-b from-oro-vivo to-oro text-marca-oscuro" : domingo ? "bg-oro-suave text-oro" : "bg-marca-claro text-marca"
+                  esHoy ? "bg-gradient-to-b from-oro-vivo to-oro text-marca-oscuro" : domingo ? "bg-oro-suave text-oro" : "bg-marca-claro text-titulo"
                 }`}>
                   <span className="text-[10px] font-bold uppercase tracking-widest">{esHoy ? "Hoy" : DIAS[diaSemana(f)]}</span>
                   <span className="titulo text-2xl font-semibold leading-none">{+f.slice(8)}</span>

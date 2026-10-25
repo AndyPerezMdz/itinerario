@@ -68,15 +68,15 @@ export default async function MisTurnos() {
             const primero = i === 0;
             return (
               <li key={i}
-                className={`flex items-center gap-4 rounded-3xl border bg-white p-3 pr-4 shadow-sm ${primero ? "border-oro-vivo ring-2 ring-oro-vivo/25" : "border-stone-200/70"}`}>
-                <div className={`flex w-16 shrink-0 flex-col items-center rounded-2xl py-2 ${primero ? "bg-gradient-to-b from-oro-vivo to-oro text-marca-oscuro" : "bg-marca-claro text-marca"}`}>
+                className={`flex items-center gap-4 rounded-3xl border bg-superficie p-3 pr-4 shadow-sm ${primero ? "border-oro-vivo ring-2 ring-oro-vivo/25" : "border-stone-200/70"}`}>
+                <div className={`flex w-16 shrink-0 flex-col items-center rounded-2xl py-2 ${primero ? "bg-gradient-to-b from-oro-vivo to-oro text-marca-oscuro" : "bg-marca-claro text-titulo"}`}>
                   <span className="text-[10px] font-bold uppercase tracking-widest">{MESES[d.getUTCMonth()].slice(0, 3)}</span>
                   <span className="titulo text-3xl font-semibold leading-none">{d.getUTCDate()}</span>
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="size-2 rounded-full" style={{ background: color }} />
-                    <span className="truncate font-semibold text-marca">{e.titulo ?? e.actividad?.nombre}</span>
+                    <span className="truncate font-semibold text-titulo">{e.titulo ?? e.actividad?.nombre}</span>
                   </div>
                   <div className="mt-0.5 text-sm text-stone-500">
                     {DIA_LARGO[d.getUTCDay()]}{e.hora && ` · ${e.hora.slice(0, 5)}`} · {t.rol?.nombre}

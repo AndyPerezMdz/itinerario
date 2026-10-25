@@ -33,7 +33,7 @@ export function MiembroCampos({
         <div className="mt-2 flex flex-wrap gap-2">
           {roles.map((r) => (
             <label key={r.id}
-              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-300 px-3 py-1.5 text-sm has-[:checked]:border-marca has-[:checked]:bg-marca/5 has-[:checked]:text-marca">
+              className="flex cursor-pointer items-center gap-2 rounded-full border border-stone-300 px-3 py-1.5 text-sm has-[:checked]:border-marca has-[:checked]:bg-marca/5 has-[:checked]:text-titulo">
               <input type="checkbox" name="roles" value={r.id} defaultChecked={rolesActuales.includes(r.id)} className="size-3.5" />
               {r.nombre}
             </label>

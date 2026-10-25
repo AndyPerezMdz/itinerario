@@ -11,7 +11,7 @@ export default function Registro() {
       <RegistroForm />
       <p className="mt-5 text-center text-sm text-stone-500">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-semibold text-marca hover:text-oro">Inicia sesión</Link>
+        <Link href="/login" className="font-semibold text-titulo hover:text-oro">Inicia sesión</Link>
       </p>
     </AuthShell>
   );

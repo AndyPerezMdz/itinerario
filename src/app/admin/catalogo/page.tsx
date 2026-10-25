@@ -23,7 +23,7 @@ export default async function Catalogo() {
             <li key={a.id} className="py-2">
               <form action={guardarActividad} className="flex items-center gap-2">
                 <input type="hidden" name="id" value={a.id} />
-                <input type="color" name="color" defaultValue={a.color} className="size-8 shrink-0 cursor-pointer rounded border border-stone-200 bg-white" />
+                <input type="color" name="color" defaultValue={a.color} className="size-8 shrink-0 cursor-pointer rounded border border-stone-200 bg-superficie" />
                 <input name="nombre" defaultValue={a.nombre} required className={`${ui.input} mt-0`} />
                 <label className="flex shrink-0 items-center gap-1 text-xs text-stone-500" title="Especial">
                   <input type="checkbox" name="es_especial" defaultChecked={a.es_especial} /> Esp.
@@ -39,7 +39,7 @@ export default async function Catalogo() {
         </ul>
 
         <form action={guardarActividad} className="mt-4 flex items-center gap-2 border-t border-stone-100 pt-4">
-          <input type="color" name="color" defaultValue="#1e3a8a" className="size-8 shrink-0 cursor-pointer rounded border border-stone-200 bg-white" />
+          <input type="color" name="color" defaultValue="#1e3a8a" className="size-8 shrink-0 cursor-pointer rounded border border-stone-200 bg-superficie" />
           <input name="nombre" placeholder="Nueva actividad…" required className={`${ui.input} mt-0`} />
           <label className="flex shrink-0 items-center gap-1 text-xs text-stone-500">
             <input type="checkbox" name="es_especial" /> Esp.

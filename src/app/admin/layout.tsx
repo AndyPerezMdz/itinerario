@@ -13,9 +13,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <Nav nombre={perfil.nombre} rol={perfil.rol} />
-      <div className="mx-auto max-w-6xl px-4 py-6">
+      <div className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[220px_1fr] lg:gap-8">
         <AdminTabs />
-        <div className="mt-6">{children}</div>
+        <div className="min-w-0">{children}</div>
       </div>
     </>
   );

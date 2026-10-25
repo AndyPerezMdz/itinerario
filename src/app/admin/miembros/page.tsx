@@ -31,7 +31,7 @@ export default async function Miembros({ searchParams }: { searchParams: Promise
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="titulo text-2xl font-semibold text-marca">Miembros</h1>
+        <h1 className="titulo text-2xl font-semibold text-titulo">Miembros</h1>
         <form className="ml-auto flex gap-2">
           <input name="q" defaultValue={q} placeholder="Buscar…" className={`${ui.input} mt-0 w-48`} />
         </form>
@@ -49,7 +49,7 @@ export default async function Miembros({ searchParams }: { searchParams: Promise
         </form>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-stone-200/80 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-stone-200/80 bg-superficie shadow-sm">
         <ul className="divide-y divide-stone-100">
           {(miembros ?? []).map((m) => (
             <li key={m.id}>

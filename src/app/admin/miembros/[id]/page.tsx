@@ -38,7 +38,7 @@ export default async function EditarMiembro({ params }: { params: Promise<{ id: 
       <form action={guardarMiembro} className={`${ui.card} space-y-5`}>
         <input type="hidden" name="id" value={m.id} />
         <div className="flex items-center gap-3">
-          <h1 className="titulo text-2xl font-semibold text-marca">{m.nombre}</h1>
+          <h1 className="titulo text-2xl font-semibold text-titulo">{m.nombre}</h1>
           {m.perfil_id && <span className="rounded-full bg-green-50 px-2 py-0.5 text-xs text-green-700">Con cuenta</span>}
         </div>
         <MiembroCampos roles={roles ?? []} m={m} rolesActuales={(m.miembro_roles as { rol_id: string }[]).map((r) => r.rol_id)} />

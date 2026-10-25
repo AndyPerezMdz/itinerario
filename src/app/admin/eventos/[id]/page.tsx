@@ -46,7 +46,7 @@ export default async function EditarEvento({
         <div className="flex items-start gap-3">
           <span className="mt-1.5 size-3 rounded-full" style={{ background: act?.color }} />
           <div>
-            <h1 className="titulo text-2xl font-semibold text-marca">{e.titulo ?? act?.nombre}</h1>
+            <h1 className="titulo text-2xl font-semibold text-titulo">{e.titulo ?? act?.nombre}</h1>
             <p className="text-sm text-stone-500">{fechaLarga(e.fecha)}</p>
           </div>
           {e.regla_id && (

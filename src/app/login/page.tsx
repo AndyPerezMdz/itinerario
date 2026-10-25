@@ -17,7 +17,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
       <LoginForm next={next ?? "/"} />
       <p className="mt-5 text-center text-sm text-stone-500">
         ¿No tienes cuenta?{" "}
-        <Link href="/registro" className="font-semibold text-marca hover:text-oro">Regístrate</Link>
+        <Link href="/registro" className="font-semibold text-titulo hover:text-oro">Regístrate</Link>
       </p>
     </AuthShell>
   );

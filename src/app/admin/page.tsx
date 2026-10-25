@@ -34,8 +34,8 @@ export default async function AdminResumen() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map((s) => (
-          <Link key={s.n} href={s.href} className="rounded-2xl border border-stone-200/80 bg-white p-4 shadow-sm hover:border-oro">
-            <div className="titulo text-3xl font-semibold tabular-nums text-marca">{s.v}</div>
+          <Link key={s.n} href={s.href} className="rounded-2xl border border-stone-200/80 bg-superficie p-4 shadow-sm hover:border-oro">
+            <div className="titulo text-3xl font-semibold tabular-nums text-titulo">{s.v}</div>
             <div className="text-xs text-stone-500">{s.n}</div>
           </Link>
         ))}

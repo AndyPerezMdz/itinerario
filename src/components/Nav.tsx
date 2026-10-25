@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cerrarSesion } from "@/app/login/actions";
 import { puedeEditar, type RolApp } from "@/lib/tipos";
 import antorcha from "../../public/antorcha-clara.png";
+import { BotonTema } from "./BotonTema";
 import { NavLinks } from "./NavLinks";
 
 export function Nav({ nombre, rol }: { nombre: string; rol: RolApp }) {
@@ -29,6 +30,7 @@ export function Nav({ nombre, rol }: { nombre: string; rol: RolApp }) {
         </div>
 
         <div className="ml-auto flex items-center gap-1 text-sm">
+          <BotonTema />
           <Link href="/cuenta" className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 transition hover:bg-white/10" title="Tu cuenta">
             <span className="flex size-8 items-center justify-center rounded-full bg-gradient-to-b from-oro-claro to-oro text-sm font-bold text-marca-oscuro ring-2 ring-white/20">
               {inicial}

@@ -22,7 +22,7 @@ export function EventoChip({
     <>
       <div className="flex items-start gap-1.5">
         <span className="mt-[5px] size-1.5 shrink-0 rounded-full" style={{ background: color }} />
-        <span className={`font-semibold leading-snug ${cancelado ? "line-through" : ""}`} style={{ color }}>
+        <span className={`chip-texto font-semibold leading-snug ${cancelado ? "line-through" : ""}`}>
           {especial && <span className="mr-0.5">✦</span>}
           {nombre}
         </span>
@@ -38,7 +38,7 @@ export function EventoChip({
               className={`rounded-full px-1.5 py-px ${
                 g.id === resaltar
                   ? "bg-marca font-semibold text-white"
-                  : "bg-white/80 text-stone-600 ring-1 ring-inset ring-stone-900/5"
+                  : "bg-superficie/80 text-stone-600 ring-1 ring-inset ring-stone-900/5"
               }`}
             >
               {g.nombre}
@@ -50,13 +50,10 @@ export function EventoChip({
     </>
   );
 
-  const clase = `block rounded-xl px-2 py-1.5 ${grande ? "text-[13px]" : "text-[11px]"} transition ${
+  const clase = `chip block rounded-xl px-2 py-1.5 ${grande ? "text-[13px]" : "text-[11px]"} transition ${
     cancelado ? "opacity-60" : ""
   } ${href ? "hover:-translate-y-px hover:shadow-md" : ""}`;
-  const estilo = {
-    background: `linear-gradient(135deg, ${color}1f, ${color}0d)`,
-    boxShadow: `inset 0 0 0 1px ${color}22`,
-  };
+  const estilo = { "--c": color } as React.CSSProperties;
 
   return href ? (
     <Link href={href} className={clase} style={estilo} title={e.notas ?? "Editar"}>{contenido}</Link>

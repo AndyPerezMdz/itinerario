@@ -2,6 +2,7 @@ import { requerirMiembro } from "@/lib/supabase/server";
 import { Submit } from "@/components/Submit";
 import { fechaCorta, hoyISO } from "@/lib/fechas";
 import { ui } from "@/lib/ui";
+import { Plegable } from "@/components/Plegable";
 import { ReglaForm } from "./ReglaForm";
 import { alternarRegla, borrarRegla } from "./actions";
 
@@ -40,9 +41,18 @@ export default async function Reglas() {
   ]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      <div className="mb-2">
+        <h1 className={ui.h1}>Reglas</h1>
+        <p className={ui.ayuda}>Lo que se repite. Con esto se arma el calendario al darle “Generar mes”.</p>
+      </div>
+
+      <Plegable titulo="Nueva regla" detalle="Ej. “cada sábado”, “el día 14”, “el último jueves”" acento>
+        <ReglaForm actividades={actividades ?? []} rotaciones={rotaciones ?? []} hoy={hoyISO()} />
+      </Plegable>
+
       <section className={ui.card}>
-        <h1 className={ui.h2}>Reglas recurrentes</h1>
+        <h2 className={ui.h2}>Reglas recurrentes</h2>
         <p className={ui.ayuda}>
           Con esto se arma el calendario al darle “Generar mes”. Pausar o borrar una regla no toca los eventos que ya se crearon.
         </p>
@@ -76,10 +86,6 @@ export default async function Reglas() {
         </ul>
       </section>
 
-      <section className={ui.card}>
-        <h2 className={`${ui.h2} mb-4`}>Nueva regla</h2>
-        <ReglaForm actividades={actividades ?? []} rotaciones={rotaciones ?? []} hoy={hoyISO()} />
-      </section>
     </div>
   );
 }

@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Modo oscuro por clase en <html> (lo pone el script de layout.tsx) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Paleta sacada del logo: azul profundo + oro viejo, sobre papel cálido */
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
@@ -15,12 +18,54 @@
   --color-oro-suave: #f6f0e1;
   --color-tinta: #17202c;
   --color-papel: #f7f3eb;
+
+  /* Tokens que cambian con el tema */
+  --color-superficie: #ffffff;
+  --color-titulo: #0a3156;
+}
+
+/* ===== Tema oscuro =====
+   En vez de llenar todo de dark:, se redefinen las variables:
+   grises invertidos, superficies azul noche, títulos en crema. */
+.dark {
+  color-scheme: dark;
+
+  --color-papel: #08121e;
+  --color-superficie: #0f1b2b;
+  --color-tinta: #e6e9ee;
+  --color-titulo: #efe4c6;
+  --color-marca-claro: #16304e;
+  --color-oro-suave: #2a2414;
+  --color-marca: #1a4a7c;
+  --color-marca-medio: #2361a0;
+  --color-marca-oscuro: #0b2a4a;
+
+  --color-stone-50: #142131;
+  --color-stone-100: #1b2a3c;
+  --color-stone-200: #243548;
+  --color-stone-300: #33475d;
+  --color-stone-400: #7b8796;
+  --color-stone-500: #9ba5b2;
+  --color-stone-600: #b9c1cb;
+  --color-stone-700: #d2d8df;
+  --color-stone-800: #e3e7ec;
+  --color-stone-900: #f1f3f6;
+
+  --color-green-50: #0f2a1d;   --color-green-200: #1d5a3a;
+  --color-green-700: #7ee2a8;  --color-green-800: #9eeabd;  --color-green-900: #bff3d3;
+  --color-red-50: #2e1416;     --color-red-100: #3d1a1d;    --color-red-200: #6b2a2f;  --color-red-300: #8a3a40;
+  --color-red-500: #f87171;    --color-red-600: #fca5a5;    --color-red-700: #fca5a5;  --color-red-900: #fecaca;
+  --color-amber-50: #2b2110;   --color-amber-200: #5c4720;
+  --color-amber-700: #f5c977;  --color-amber-900: #fbdea0;
+  --color-violet-50: #221a3a;  --color-violet-700: #c4b5fd;
+  --color-sky-50: #0f2536;     --color-sky-700: #7dd3fc;
 }
 
 @layer base {
   body {
     background: var(--color-papel);
     color: var(--color-tinta);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Selects con flecha propia (los del navegador se ven de 2004) */
@@ -58,6 +103,19 @@
   );
   mask-image: linear-gradient(to bottom, black 20%, transparent 95%);
 }
+
+/* Eventos: el color de cada actividad viene en --c.
+   En oscuro se aclara el texto para que se lea. */
+.chip {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 12%, transparent), color-mix(in srgb, var(--c) 5%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 14%, transparent);
+}
+.chip-texto { color: var(--c); }
+.dark .chip {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--c) 24%, transparent), color-mix(in srgb, var(--c) 10%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c) 30%, transparent);
+}
+.dark .chip-texto { color: color-mix(in srgb, var(--c) 55%, white); }
 
 .sin-scroll {
   scrollbar-width: none;
