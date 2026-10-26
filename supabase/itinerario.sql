@@ -335,6 +335,69 @@ create policy "miembro_roles_escribir" on public.miembro_roles for all    to aut
 
 
 -- ---------- Alta de usuario: perfil + admin por correo + liga con ficha ----------
+-- ---------- Ligar cuenta con ficha por NOMBRE (si no se pudo por correo) ----------
+-- "José Pérez", "jose perez", "JOSÉ  PÉREZ" → "jose perez"
+create or replace function public.normalizar_nombre(t text)
+returns text language sql immutable as $$
+  select regexp_replace(
+    lower(translate(trim(coalesce(t, '')), 'ÁÉÍÓÚÜÑáéíóúüñ', 'AEIOUUNaeiouun')),
+    '\s+', ' ', 'g')
+$$;
+
+-- Busca UNA ficha sin cuenta que se llame igual (nombre completo, o la ficha dice "Eva"
+-- y la persona se registró como "Eva Pérez"). Si hay 0 o más de 1, no hace nada.
+-- Devuelve el id de la ficha ligada (o null).
+create or replace function public.ligar_por_nombre(p_perfil uuid)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  v_nombre text;
+  v_email  text;
+  v_ficha  uuid;
+  v_n      int;
+begin
+  -- Ya está ligada: nada que hacer
+  if exists (select 1 from public.miembros where perfil_id = p_perfil) then
+    return null;
+  end if;
+
+  select public.normalizar_nombre(nombre), email into v_nombre, v_email
+    from public.perfiles where id = p_perfil;
+  if coalesce(v_nombre, '') = '' then
+    return null;
+  end if;
+
+  -- 1º nombre completo exacto; 2º la ficha es solo el primer nombre
+  for i in 1..2 loop
+    select count(*), min(m.id::text)::uuid into v_n, v_ficha
+      from public.miembros m
+     where m.perfil_id is null and m.activo
+       and (m.email is null or m.email = v_email)
+       and case i
+             when 1 then public.normalizar_nombre(m.nombre) = v_nombre
+             else public.normalizar_nombre(m.nombre) = split_part(v_nombre, ' ', 1)
+                  and position(' ' in public.normalizar_nombre(m.nombre)) = 0
+           end;
+    exit when v_n > 0;
+  end loop;
+
+  if v_n <> 1 then
+    return null;   -- nadie, o hay más de uno con ese nombre: que decida el admin
+  end if;
+
+  update public.miembros
+     set perfil_id = p_perfil,
+         email = coalesce(email, v_email)
+   where id = v_ficha and perfil_id is null;
+  -- Su nombre de cuenta queda como el de la ficha (así sale igual en toda la app)
+  update public.perfiles set nombre = (select nombre from public.miembros where id = v_ficha)
+   where id = p_perfil;
+  return v_ficha;
+exception when unique_violation then
+  return null;     -- ese correo ya está en otra ficha
+end $$;
+
+revoke all on function public.ligar_por_nombre(uuid) from public, anon, authenticated;
+
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
@@ -350,6 +413,9 @@ begin
   update public.miembros
      set perfil_id = new.id
    where lower(email) = lower(new.email) and perfil_id is null;
+
+  -- Si no había ficha con su correo, buscarla por su nombre
+  perform public.ligar_por_nombre(new.id);
 
   return new;
 end $$;
@@ -421,6 +487,8 @@ begin
 
   update public.perfiles set nombre = v_nombre where id = auth.uid();
   update public.miembros set nombre = v_nombre where perfil_id = auth.uid();
+  -- Si su cuenta aún no estaba ligada, quizá con este nombre ya se encuentra su ficha
+  perform public.ligar_por_nombre(auth.uid());
 end $$;
 
 revoke all on function public.cambiar_mi_nombre(text) from public, anon;
@@ -461,6 +529,17 @@ drop trigger if exists on_auth_user_email on auth.users;
 create trigger on_auth_user_email
   after update of email on auth.users
   for each row execute function public.sincronizar_correo();
+
+-- ---------- Ligar por nombre a quienes ya se registraron y siguen sin ficha ----------
+do $$
+declare p record;
+begin
+  for p in select id from public.perfiles pf
+            where not exists (select 1 from public.miembros m where m.perfil_id = pf.id)
+  loop
+    perform public.ligar_por_nombre(p.id);
+  end loop;
+end $$;
 
 -- ============================================================
 -- 5. Datos del Excel (oct 2026 – sep 2027)

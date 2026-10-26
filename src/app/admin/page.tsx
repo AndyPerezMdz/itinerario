@@ -13,7 +13,7 @@ export default async function AdminResumen() {
   const { supabase } = await requerirMiembro();
   const hoy = hoyISO();
 
-  const [miembros, sinCuenta, reglas, proximos, ultimo, asigFuturas, rolesDe] = await Promise.all([
+  const [miembros, sinCuenta, reglas, proximos, ultimo, asigFuturas, rolesDe, perfiles, ligados] = await Promise.all([
     supabase.from("miembros").select("*", { count: "exact", head: true }).eq("activo", true),
     supabase.from("miembros").select("*", { count: "exact", head: true }).eq("activo", true).is("perfil_id", null),
     supabase.from("reglas").select("*", { count: "exact", head: true }).eq("activa", true),
@@ -24,7 +24,13 @@ export default async function AdminResumen() {
       .gte("evento.fecha", hoy)
       .returns<{ miembro_id: string; rol_id: string; miembro: { id: string; nombre: string } | null; rol: { nombre: string } | null }[]>(),
     supabase.from("miembro_roles").select("miembro_id, rol_id"),
+    supabase.from("perfiles").select("id, nombre, email"),
+    supabase.from("miembros").select("perfil_id").not("perfil_id", "is", null),
   ]);
+
+  // Cuentas que se registraron pero no se pudieron ligar solas a su ficha
+  const conFicha = new Set((ligados.data ?? []).map((m) => m.perfil_id));
+  const sinFicha = (perfiles.data ?? []).filter((p) => !conFicha.has(p.id));
 
   // Turnos próximos de gente que ya no tiene ese rol en su ficha
   const tiene = new Set((rolesDe.data ?? []).map((r) => `${r.miembro_id}:${r.rol_id}`));
@@ -60,6 +66,25 @@ export default async function AdminResumen() {
           </Link>
         ))}
       </div>
+
+      {sinFicha.length > 0 && (
+        <div className="rounded-3xl border border-sky-200 bg-sky-50 p-5">
+          <h2 className="font-semibold text-sky-900">
+            {sinFicha.length} {sinFicha.length === 1 ? "cuenta nueva" : "cuentas nuevas"} sin ligar a su ficha
+          </h2>
+          <p className="mt-1 text-sm text-sky-900/80">
+            No coincidió su nombre con ninguna ficha (o coincidió con más de una). Ligalas tú para que vean sus turnos:
+          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {sinFicha.map((p) => (
+              <span key={p.id} className="rounded-full bg-superficie px-3 py-1 text-sm text-sky-900 ring-1 ring-sky-200">
+                <b>{p.nombre}</b> · {p.email}
+              </span>
+            ))}
+            <Link href="/admin/usuarios" className="ml-1 text-sm font-semibold text-sky-900 underline">Ir a Cuentas →</Link>
+          </div>
+        </div>
+      )}
 
       {totalColgados > 0 && (
         <Formulario action={quitarTodosSinRol} className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
